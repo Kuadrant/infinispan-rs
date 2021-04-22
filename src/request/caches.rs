@@ -51,6 +51,10 @@ pub fn create_local(name: impl AsRef<str>) -> Request {
     )
 }
 
+pub fn exists(name: impl AsRef<str>) -> Request {
+    Request::new(Method::Head, cache_url(name), HashMap::new(), None)
+}
+
 pub fn delete(name: impl AsRef<str>) -> Request {
     Request::new(Method::Delete, cache_url(name), HashMap::new(), None)
 }
