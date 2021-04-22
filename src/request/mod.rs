@@ -9,6 +9,7 @@ pub mod entries;
 
 pub enum Method {
     Get,
+    Head,
     Post,
     Put,
     Delete,
@@ -20,6 +21,7 @@ impl Method {
 
         match self {
             Get => "GET",
+            Head => "HEAD",
             Post => "POST",
             Put => "PUT",
             Delete => "DELETE",
