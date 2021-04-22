@@ -63,6 +63,15 @@ pub fn get(cache_name: impl AsRef<str>, entry_name: impl AsRef<str>) -> Request 
     )
 }
 
+pub fn exists(cache_name: impl AsRef<str>, entry_name: impl AsRef<str>) -> Request {
+    Request::new(
+        Method::Head,
+        entry_url(cache_name, entry_name),
+        HashMap::new(),
+        None,
+    )
+}
+
 pub fn update(
     cache_name: impl AsRef<str>,
     entry_name: impl AsRef<str>,
