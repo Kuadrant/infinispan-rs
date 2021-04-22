@@ -150,6 +150,10 @@ pub fn delete(name: impl AsRef<str>) -> Request {
     Request::new(Method::Delete, counter_path(name), HashMap::new(), None)
 }
 
+pub fn list() -> Request {
+    Request::new(Method::Get, COUNTERS_ENDPOINT, HashMap::new(), None)
+}
+
 fn counter_path(name: impl AsRef<str>) -> String {
     format!(
         "/{counters_endpoint}/{counter_name}",
