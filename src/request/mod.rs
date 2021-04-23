@@ -36,6 +36,14 @@ pub struct Request {
     pub body: Option<String>,
 }
 
+pub trait ToHttpRequest {
+    fn to_http_req(
+        &self,
+        base_url: impl AsRef<str>,
+        basic_auth_encoded: impl AsRef<str>,
+    ) -> HttpRequest<String>;
+}
+
 impl Request {
     pub fn new(
         method: impl Into<Method>,
@@ -50,8 +58,10 @@ impl Request {
             body,
         }
     }
+}
 
-    pub fn to_http_req(
+impl ToHttpRequest for Request {
+    fn to_http_req(
         &self,
         base_url: impl AsRef<str>,
         basic_auth_encoded: impl AsRef<str>,

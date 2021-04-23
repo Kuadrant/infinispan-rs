@@ -2,7 +2,7 @@ use std::convert::TryFrom;
 
 use reqwest::Response;
 
-use crate::request::Request;
+use crate::request::ToHttpRequest;
 
 pub mod request;
 
@@ -28,10 +28,8 @@ impl Infinispan {
         }
     }
 
-    pub async fn run(&self, request: impl Into<Request>) -> Result<Response, reqwest::Error> {
-        let http_req = request
-            .into()
-            .to_http_req(&self.base_url, &self.basic_auth_encoded_val);
+    pub async fn run<R: ToHttpRequest>(&self, request: &R) -> Result<Response, reqwest::Error> {
+        let http_req = request.to_http_req(&self.base_url, &self.basic_auth_encoded_val);
 
         self.http_client
             .execute(reqwest::Request::try_from(http_req).unwrap())

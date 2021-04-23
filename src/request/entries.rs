@@ -1,5 +1,5 @@
 use crate::request::caches::CACHES_ENDPOINT;
-use crate::request::{Method, Request};
+use crate::request::{Method, Request, ToHttpRequest};
 use std::collections::HashMap;
 use std::time::Duration;
 
@@ -33,8 +33,8 @@ impl CreateEntryReq {
     }
 }
 
-impl From<CreateEntryReq> for Request {
-    fn from(request: CreateEntryReq) -> Request {
+impl From<&CreateEntryReq> for Request {
+    fn from(request: &CreateEntryReq) -> Request {
         let mut headers = HashMap::new();
 
         if let Some(ttl) = request.ttl {
@@ -43,10 +43,20 @@ impl From<CreateEntryReq> for Request {
 
         Request::new(
             Method::Post,
-            entry_url(request.cache_name, request.entry_name),
+            entry_url(&request.cache_name, &request.entry_name),
             headers,
-            request.value,
+            request.value.clone(),
         )
+    }
+}
+
+impl ToHttpRequest for CreateEntryReq {
+    fn to_http_req(
+        &self,
+        base_url: impl AsRef<str>,
+        basic_auth_encoded: impl AsRef<str>,
+    ) -> http::Request<String> {
+        Request::from(self).to_http_req(base_url, basic_auth_encoded)
     }
 }
 

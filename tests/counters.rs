@@ -20,8 +20,8 @@ mod counters {
 
         let counter_name = "test_counter";
 
-        let _ = run(counters::create_weak(counter_name)).await;
-        let resp = run(counters::get(counter_name)).await;
+        let _ = run(&counters::create_weak(counter_name)).await;
+        let resp = run(&counters::get(counter_name)).await;
 
         assert!(resp.status().is_success());
         assert_eq!("0", resp.bytes().await.unwrap()); // Default counter value is 0
@@ -35,8 +35,8 @@ mod counters {
         let counter_name = "test_counter";
         let counter_val = 10;
 
-        let _ = run(counters::create_weak(counter_name).with_value(counter_val)).await;
-        let resp = run(counters::get(counter_name)).await;
+        let _ = run(&counters::create_weak(counter_name).with_value(counter_val)).await;
+        let resp = run(&counters::get(counter_name)).await;
 
         assert!(resp.status().is_success());
         assert_eq!(counter_val.to_string(), resp.bytes().await.unwrap());
@@ -49,8 +49,8 @@ mod counters {
 
         let counter_name = "test_counter";
 
-        let _ = run(counters::create_strong(counter_name)).await;
-        let resp = run(counters::get(counter_name)).await;
+        let _ = run(&counters::create_strong(counter_name)).await;
+        let resp = run(&counters::get(counter_name)).await;
 
         assert!(resp.status().is_success());
         assert_eq!("0", resp.bytes().await.unwrap()); // Default counter value is 0
@@ -64,8 +64,8 @@ mod counters {
         let counter_name = "test_counter";
         let counter_val = 10;
 
-        let _ = run(counters::create_strong(counter_name).with_value(counter_val)).await;
-        let resp = run(counters::get(counter_name)).await;
+        let _ = run(&counters::create_strong(counter_name).with_value(counter_val)).await;
+        let resp = run(&counters::get(counter_name)).await;
 
         assert!(resp.status().is_success());
         assert_eq!(counter_val.to_string(), resp.bytes().await.unwrap());
@@ -78,9 +78,9 @@ mod counters {
 
         let counter_name = "test_counter";
 
-        let _ = run(counters::create_strong(counter_name)).await;
-        let _ = run(counters::increment(counter_name)).await;
-        let resp = run(counters::get(counter_name)).await;
+        let _ = run(&counters::create_strong(counter_name)).await;
+        let _ = run(&counters::increment(counter_name)).await;
+        let resp = run(&counters::get(counter_name)).await;
 
         assert!(resp.status().is_success());
         assert_eq!("1", resp.bytes().await.unwrap());
@@ -93,9 +93,9 @@ mod counters {
 
         let counter_name = "test_counter";
 
-        let _ = run(counters::create_strong(counter_name).with_value(1)).await;
-        let _ = run(counters::increment(counter_name).by(2)).await;
-        let resp = run(counters::get(counter_name)).await;
+        let _ = run(&counters::create_strong(counter_name).with_value(1)).await;
+        let _ = run(&counters::increment(counter_name).by(2)).await;
+        let resp = run(&counters::get(counter_name)).await;
 
         assert!(resp.status().is_success());
         assert_eq!("3", resp.bytes().await.unwrap());
@@ -108,9 +108,9 @@ mod counters {
 
         let counter_name = "test_counter";
 
-        let _ = run(counters::create_weak(counter_name)).await;
-        let _ = run(counters::delete(counter_name)).await;
-        let resp = run(counters::get(counter_name)).await;
+        let _ = run(&counters::create_weak(counter_name)).await;
+        let _ = run(&counters::delete(counter_name)).await;
+        let resp = run(&counters::get(counter_name)).await;
 
         assert_eq!(StatusCode::NOT_FOUND, resp.status());
     }
@@ -124,19 +124,19 @@ mod counters {
             HashSet::from_iter(vec!["counter_1".into(), "counter_2".into()]);
 
         for counter_name in &counter_names {
-            let _ = run(counters::create_weak(counter_name)).await;
+            let _ = run(&counters::create_weak(counter_name)).await;
         }
 
-        let resp = run(counters::list()).await;
+        let resp = run(&counters::list()).await;
 
         assert_eq!(counter_names, counter_names_from_list_resp(resp).await);
     }
 
     async fn cleanup() {
-        let resp = run(counters::list()).await;
+        let resp = run(&counters::list()).await;
 
         for counter_name in counter_names_from_list_resp(resp).await {
-            let _ = run(counters::delete(counter_name)).await;
+            let _ = run(&counters::delete(counter_name)).await;
         }
     }
 
