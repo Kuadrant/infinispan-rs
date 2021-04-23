@@ -6,6 +6,7 @@ use crate::request::ToHttpRequest;
 
 pub mod request;
 
+#[derive(Debug)]
 pub struct Infinispan {
     base_url: String,
     http_client: reqwest::Client,
