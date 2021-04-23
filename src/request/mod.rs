@@ -7,6 +7,7 @@ pub mod caches;
 pub mod counters;
 pub mod entries;
 
+#[derive(Debug)]
 pub enum Method {
     Get,
     Head,
@@ -29,6 +30,7 @@ impl Method {
     }
 }
 
+#[derive(Debug)]
 pub struct Request {
     pub method: Method,
     pub path_and_query: String,

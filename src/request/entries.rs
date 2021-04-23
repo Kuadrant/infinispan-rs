@@ -5,6 +5,7 @@ use std::time::Duration;
 
 const TTL_HEADER: &str = "timeToLiveSeconds";
 
+#[derive(Debug)]
 pub struct CreateEntryReq {
     cache_name: String,
     entry_name: String,

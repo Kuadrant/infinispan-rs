@@ -99,6 +99,7 @@ impl ToHttpRequest for CreateCounterReq {
     }
 }
 
+#[derive(Debug)]
 pub struct IncrementCounterReq {
     name: String,
     delta: Option<CounterVal>,
