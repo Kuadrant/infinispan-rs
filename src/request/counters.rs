@@ -1,4 +1,4 @@
-use crate::request::{Method, Request};
+use crate::request::{Method, Request, ToHttpRequest};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::collections::HashMap;
@@ -78,14 +78,24 @@ impl CreateCounterReq {
     }
 }
 
-impl From<CreateCounterReq> for Request {
-    fn from(request: CreateCounterReq) -> Request {
+impl From<&CreateCounterReq> for Request {
+    fn from(request: &CreateCounterReq) -> Request {
         Request::new(
             Method::Post,
-            counter_path(request.name),
+            counter_path(&request.name),
             HashMap::new(),
             Some(json!(request.counter).to_string()),
         )
+    }
+}
+
+impl ToHttpRequest for CreateCounterReq {
+    fn to_http_req(
+        &self,
+        base_url: impl AsRef<str>,
+        basic_auth_encoded: impl AsRef<str>,
+    ) -> http::Request<String> {
+        Request::from(self).to_http_req(base_url, basic_auth_encoded)
     }
 }
 
@@ -119,14 +129,24 @@ impl IncrementCounterReq {
     }
 }
 
-impl From<IncrementCounterReq> for Request {
-    fn from(request: IncrementCounterReq) -> Request {
+impl From<&IncrementCounterReq> for Request {
+    fn from(request: &IncrementCounterReq) -> Request {
         Request::new(
             Method::Post,
             request.query_with_args(),
             HashMap::new(),
             None,
         )
+    }
+}
+
+impl ToHttpRequest for IncrementCounterReq {
+    fn to_http_req(
+        &self,
+        base_url: impl AsRef<str>,
+        basic_auth_encoded: impl AsRef<str>,
+    ) -> http::Request<String> {
+        Request::from(self).to_http_req(base_url, basic_auth_encoded)
     }
 }
 

@@ -18,8 +18,8 @@ mod entries {
 
         let entry_name = "test_entry";
 
-        let _ = run(entries::create(TEST_CACHE_NAME, entry_name)).await;
-        let resp = run(entries::exists(TEST_CACHE_NAME, entry_name)).await;
+        let _ = run(&entries::create(TEST_CACHE_NAME, entry_name)).await;
+        let resp = run(&entries::exists(TEST_CACHE_NAME, entry_name)).await;
 
         assert!(resp.status().is_success());
     }
@@ -33,8 +33,8 @@ mod entries {
         let entry_value = "some_value";
 
         let _ =
-            run(entries::create(TEST_CACHE_NAME, entry_name).with_value(entry_value.into())).await;
-        let resp = run(entries::get(TEST_CACHE_NAME, entry_name)).await;
+            run(&entries::create(TEST_CACHE_NAME, entry_name).with_value(entry_value.into())).await;
+        let resp = run(&entries::get(TEST_CACHE_NAME, entry_name)).await;
 
         assert_eq!(entry_value, entry_value_from_resp(resp).await);
     }
@@ -47,10 +47,10 @@ mod entries {
         let existing_key_name = "existing";
         let non_existing_key_name = "non_existing";
 
-        let _ = run(entries::create(TEST_CACHE_NAME, existing_key_name)).await;
+        let _ = run(&entries::create(TEST_CACHE_NAME, existing_key_name)).await;
 
-        let resp_existing = run(entries::exists(TEST_CACHE_NAME, existing_key_name)).await;
-        let resp_non_existing = run(entries::exists(TEST_CACHE_NAME, non_existing_key_name)).await;
+        let resp_existing = run(&entries::exists(TEST_CACHE_NAME, existing_key_name)).await;
+        let resp_non_existing = run(&entries::exists(TEST_CACHE_NAME, non_existing_key_name)).await;
 
         assert!(resp_existing.status().is_success());
         assert_eq!(StatusCode::NOT_FOUND, resp_non_existing.status());
@@ -65,12 +65,12 @@ mod entries {
         let new_value = "new_value";
 
         let _ =
-            run(entries::create(TEST_CACHE_NAME, entry_name)
+            run(&entries::create(TEST_CACHE_NAME, entry_name)
                 .with_value("some_initial_value".into()))
             .await;
 
-        let _ = run(entries::update(TEST_CACHE_NAME, entry_name, new_value)).await;
-        let resp = run(entries::get(TEST_CACHE_NAME, entry_name)).await;
+        let _ = run(&entries::update(TEST_CACHE_NAME, entry_name, new_value)).await;
+        let resp = run(&entries::get(TEST_CACHE_NAME, entry_name)).await;
 
         assert_eq!(new_value, entry_value_from_resp(resp).await);
     }
@@ -82,18 +82,18 @@ mod entries {
 
         let entry_name = "test_entry";
 
-        let _ = run(entries::create(TEST_CACHE_NAME, entry_name)).await;
-        let resp = run(entries::exists(TEST_CACHE_NAME, entry_name)).await;
+        let _ = run(&entries::create(TEST_CACHE_NAME, entry_name)).await;
+        let resp = run(&entries::exists(TEST_CACHE_NAME, entry_name)).await;
         assert!(resp.status().is_success());
 
-        let _ = run(entries::delete(TEST_CACHE_NAME, entry_name)).await;
-        let resp = run(entries::exists(TEST_CACHE_NAME, entry_name)).await;
+        let _ = run(&entries::delete(TEST_CACHE_NAME, entry_name)).await;
+        let resp = run(&entries::exists(TEST_CACHE_NAME, entry_name)).await;
         assert_eq!(StatusCode::NOT_FOUND, resp.status());
     }
 
     async fn setup() {
-        let _ = run(caches::delete(TEST_CACHE_NAME)).await;
-        let _ = run(caches::create_local(TEST_CACHE_NAME)).await;
+        let _ = run(&caches::delete(TEST_CACHE_NAME)).await;
+        let _ = run(&caches::create_local(TEST_CACHE_NAME)).await;
     }
 
     async fn entry_value_from_resp(response: Response) -> String {
