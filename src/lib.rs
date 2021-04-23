@@ -2,8 +2,10 @@ use std::convert::TryFrom;
 
 use reqwest::Response;
 
+use crate::errors::InfinispanError;
 use crate::request::ToHttpRequest;
 
+pub mod errors;
 pub mod request;
 
 #[derive(Debug)]
@@ -29,12 +31,15 @@ impl Infinispan {
         }
     }
 
-    pub async fn run<R: ToHttpRequest>(&self, request: &R) -> Result<Response, reqwest::Error> {
+    pub async fn run<R: ToHttpRequest>(&self, request: &R) -> Result<Response, InfinispanError> {
         let http_req = request.to_http_req(&self.base_url, &self.basic_auth_encoded_val);
 
-        self.http_client
-            .execute(reqwest::Request::try_from(http_req).unwrap())
-            .await
+        let res = self
+            .http_client
+            .execute(reqwest::Request::try_from(http_req)?)
+            .await?;
+
+        Ok(res)
     }
 
     fn basic_auth_encoded_value(username: &str, password: &str) -> String {
