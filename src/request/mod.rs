@@ -17,7 +17,7 @@ pub enum Method {
 }
 
 impl Method {
-    pub fn as_str(&self) -> &str {
+    pub const fn as_str(&self) -> &str {
         use Method::*;
 
         match self {
