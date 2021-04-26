@@ -39,7 +39,7 @@ impl StrongCounter {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum CounterType {
     Weak,
     Strong,
