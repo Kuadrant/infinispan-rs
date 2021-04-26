@@ -143,6 +143,6 @@ mod counters {
     async fn counter_names_from_list_resp(response: Response) -> HashSet<String> {
         let counter_bytes = response.bytes().await.unwrap();
         let counters_string = std::str::from_utf8(&counter_bytes).unwrap();
-        serde_json::from_str(&counters_string).unwrap()
+        serde_json::from_str(counters_string).unwrap()
     }
 }
