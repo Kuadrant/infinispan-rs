@@ -20,8 +20,8 @@ impl Infinispan {
         base_url: impl Into<String>,
         username: impl AsRef<str>,
         password: impl AsRef<str>,
-    ) -> Infinispan {
-        Infinispan {
+    ) -> Self {
+        Self {
             base_url: base_url.into(),
             http_client: reqwest::Client::new(),
             basic_auth_encoded_val: Self::basic_auth_encoded_value(

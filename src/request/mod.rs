@@ -52,8 +52,8 @@ impl Request {
         path_and_query: impl Into<String>,
         headers: HashMap<String, String>,
         body: Option<String>,
-    ) -> Request {
-        Request {
+    ) -> Self {
+        Self {
             method: method.into(),
             path_and_query: path_and_query.into(),
             headers,
