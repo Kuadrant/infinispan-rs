@@ -1,9 +1,14 @@
 [package]
+edition = "2018"
 name = "infinispan"
 version = "0.1.0"
-authors = ["David Ortiz <z.david.ortiz@gmail.com>"]
-edition = "2018"
+description = "Rust client for the Infinispan REST API"
 license = "Apache-2.0"
+authors = ["David Ortiz <z.david.ortiz@gmail.com>", "Alex Martinez Ruiz <alex@flawedcode.org>"]
+repository = "https://github.com/3scale-labs/infinispan-rs"
+readme = "README.md"
+keywords = ["client", "api", "infinispan", "jboss", "datagrid"]
+categories = ["api-bindings"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
