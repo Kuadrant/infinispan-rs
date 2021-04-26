@@ -81,7 +81,11 @@ impl ToHttpRequest for Request {
         }
 
         http_req
-            .body(self.body.as_ref().map_or("".to_string(), |b| b.to_string()))
+            .body(
+                self.body
+                    .as_ref()
+                    .map_or_else(Default::default, ToString::to_string),
+            )
             .unwrap()
     }
 }
