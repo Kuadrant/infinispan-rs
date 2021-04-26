@@ -31,7 +31,7 @@ struct Locking {
 
 impl Default for LocalCache {
     fn default() -> Self {
-        LocalCache {
+        Self {
             locking: Locking {
                 concurrency_level: DEFAULT_CONCURRENCY_LEVEL,
                 acquire_timeout: DEFAULT_ACQUIRE_TIMEOUT,

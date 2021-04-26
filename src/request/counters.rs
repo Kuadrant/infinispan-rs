@@ -39,7 +39,7 @@ impl StrongCounter {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum CounterType {
     Weak,
     Strong,
@@ -52,7 +52,7 @@ pub struct CreateCounterReq {
 }
 
 impl CreateCounterReq {
-    pub fn new(name: impl Into<String>, counter_type: CounterType) -> CreateCounterReq {
+    pub fn new(name: impl Into<String>, counter_type: CounterType) -> Self {
         let counter = match counter_type {
             CounterType::Weak => Counter::Weak(WeakCounter {
                 initial_value: None,
@@ -62,13 +62,13 @@ impl CreateCounterReq {
             }),
         };
 
-        CreateCounterReq {
+        Self {
             name: name.into(),
             counter,
         }
     }
 
-    pub fn with_value(mut self, value: CounterVal) -> CreateCounterReq {
+    pub fn with_value(mut self, value: CounterVal) -> Self {
         match &mut self.counter {
             Counter::Weak(counter) => counter.set_value(value),
             Counter::Strong(counter) => counter.set_value(value),
@@ -79,8 +79,8 @@ impl CreateCounterReq {
 }
 
 impl From<&CreateCounterReq> for Request {
-    fn from(request: &CreateCounterReq) -> Request {
-        Request::new(
+    fn from(request: &CreateCounterReq) -> Self {
+        Self::new(
             Method::Post,
             counter_path(&request.name),
             HashMap::new(),
@@ -106,14 +106,14 @@ pub struct IncrementCounterReq {
 }
 
 impl IncrementCounterReq {
-    pub fn new(name: impl Into<String>) -> IncrementCounterReq {
-        IncrementCounterReq {
+    pub fn new(name: impl Into<String>) -> Self {
+        Self {
             name: name.into(),
             delta: None,
         }
     }
 
-    pub fn by(mut self, delta: CounterVal) -> IncrementCounterReq {
+    pub fn by(mut self, delta: CounterVal) -> Self {
         self.delta = Some(delta);
         self
     }
@@ -131,8 +131,8 @@ impl IncrementCounterReq {
 }
 
 impl From<&IncrementCounterReq> for Request {
-    fn from(request: &IncrementCounterReq) -> Request {
-        Request::new(
+    fn from(request: &IncrementCounterReq) -> Self {
+        Self::new(
             Method::Post,
             request.query_with_args(),
             HashMap::new(),

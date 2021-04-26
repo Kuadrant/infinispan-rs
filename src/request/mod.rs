@@ -17,7 +17,7 @@ pub enum Method {
 }
 
 impl Method {
-    pub fn as_str(&self) -> &str {
+    pub const fn as_str(&self) -> &str {
         use Method::*;
 
         match self {
@@ -52,8 +52,8 @@ impl Request {
         path_and_query: impl Into<String>,
         headers: HashMap<String, String>,
         body: Option<String>,
-    ) -> Request {
-        Request {
+    ) -> Self {
+        Self {
             method: method.into(),
             path_and_query: path_and_query.into(),
             headers,
@@ -81,7 +81,11 @@ impl ToHttpRequest for Request {
         }
 
         http_req
-            .body(self.body.as_ref().map_or("".to_string(), |b| b.to_string()))
+            .body(
+                self.body
+                    .as_ref()
+                    .map_or_else(Default::default, ToString::to_string),
+            )
             .unwrap()
     }
 }

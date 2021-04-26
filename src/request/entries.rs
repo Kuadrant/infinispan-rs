@@ -14,8 +14,8 @@ pub struct CreateEntryReq {
 }
 
 impl CreateEntryReq {
-    pub fn new(cache_name: impl Into<String>, entry_name: impl Into<String>) -> CreateEntryReq {
-        CreateEntryReq {
+    pub fn new(cache_name: impl Into<String>, entry_name: impl Into<String>) -> Self {
+        Self {
             cache_name: cache_name.into(),
             entry_name: entry_name.into(),
             value: None,
@@ -23,26 +23,26 @@ impl CreateEntryReq {
         }
     }
 
-    pub fn with_value(mut self, value: String) -> CreateEntryReq {
+    pub fn with_value(mut self, value: String) -> Self {
         self.value = Some(value);
         self
     }
 
-    pub fn with_ttl(mut self, ttl: Duration) -> CreateEntryReq {
+    pub fn with_ttl(mut self, ttl: Duration) -> Self {
         self.ttl = Some(ttl);
         self
     }
 }
 
 impl From<&CreateEntryReq> for Request {
-    fn from(request: &CreateEntryReq) -> Request {
+    fn from(request: &CreateEntryReq) -> Self {
         let mut headers = HashMap::new();
 
         if let Some(ttl) = request.ttl {
             headers.insert(TTL_HEADER.into(), ttl.as_secs().to_string());
         }
 
-        Request::new(
+        Self::new(
             Method::Post,
             entry_url(&request.cache_name, &request.entry_name),
             headers,
