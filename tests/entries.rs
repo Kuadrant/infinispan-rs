@@ -97,7 +97,6 @@ mod entries {
     }
 
     async fn entry_value_from_resp(response: Response) -> String {
-        let resp_bytes = response.bytes().await.unwrap();
-        std::str::from_utf8(&resp_bytes).unwrap().into()
+        response.text_with_charset("utf-8").await.unwrap()
     }
 }
