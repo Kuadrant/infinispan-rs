@@ -9,13 +9,25 @@ infinispan-rs is a Rust client for the [Infinispan REST
 API](https://infinispan.org/docs/stable/titles/rest/rest.html). For now, it
 implements a small part of the API.
 
-- [**Getting started**](#getting-started)
+- [**Install**](#install)
+- [**Usage**](#usage)
 - [**Development**](#development)
 - [**License**](#license)
 
-## Getting started
+## Install
+
+Add the `infinispan` dependency to your `Cargo.toml`:
+```toml
+[dependencies]
+infinispan = 0.1
+```
+
+## Usage
 
 ```rust
+use infinispan::Infinispan;
+use infinispan::request;
+
 // Create a client
 let client = Infinispan::new("http://localhost:11222", "username", "password");
 
@@ -35,6 +47,8 @@ let resp = client.run(&req).await.unwrap();
 assert!(resp.status().is_success());
 assert_eq!("a_value", resp.text_with_charset("utf-8").await.unwrap());
 ```
+
+Check the [docs](https://docs.rs/infinispan) to learn more.
 
 ## Development
 
