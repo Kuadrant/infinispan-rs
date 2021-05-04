@@ -9,6 +9,7 @@ mod counters {
     use http::StatusCode;
     use infinispan::request::counters;
     use reqwest::Response;
+    use serde_json::Value;
     use serial_test::serial;
     use std::collections::HashSet;
     use std::iter::FromIterator;
@@ -73,6 +74,27 @@ mod counters {
 
     #[tokio::test]
     #[serial]
+    async fn get_config() {
+        cleanup().await;
+
+        let counter_name = "test_counter";
+        let initial_val = 10;
+
+        let _ = run(&counters::create_strong(counter_name).with_value(initial_val)).await;
+        let resp = run(&counters::get_config(counter_name)).await;
+
+        assert!(resp.status().is_success());
+
+        let config_bytes = resp.bytes().await.unwrap();
+        let config_str = std::str::from_utf8(&config_bytes).unwrap();
+        let config: Value = serde_json::from_str(config_str).unwrap();
+
+        assert_eq!(counter_name, config["strong-counter"]["name"]);
+        assert_eq!(initial_val, config["strong-counter"]["initial-value"]);
+    }
+
+    #[tokio::test]
+    #[serial]
     async fn increment() {
         cleanup().await;
 
@@ -103,6 +125,39 @@ mod counters {
 
     #[tokio::test]
     #[serial]
+    async fn decrement() {
+        cleanup().await;
+
+        let counter_name = "test_counter";
+        let initial_val = 10;
+
+        let _ = run(&counters::create_strong(counter_name).with_value(initial_val)).await;
+        let _ = run(&counters::decrement(counter_name)).await;
+        let resp = run(&counters::get(counter_name)).await;
+
+        assert!(resp.status().is_success());
+        assert_eq!((initial_val - 1).to_string(), resp.bytes().await.unwrap());
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn reset() {
+        cleanup().await;
+
+        let counter_name = "test_counter";
+        let initial_val = 10;
+
+        let _ = run(&counters::create_strong(counter_name).with_value(initial_val)).await;
+        let _ = run(&counters::increment(counter_name)).await;
+        let _ = run(&counters::reset(counter_name)).await;
+        let resp = run(&counters::get(counter_name)).await;
+
+        assert!(resp.status().is_success());
+        assert_eq!(initial_val.to_string(), resp.bytes().await.unwrap());
+    }
+
+    #[tokio::test]
+    #[serial]
     async fn delete() {
         cleanup().await;
 
@@ -113,6 +168,48 @@ mod counters {
         let resp = run(&counters::get(counter_name)).await;
 
         assert_eq!(StatusCode::NOT_FOUND, resp.status());
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn compare_and_set() {
+        cleanup().await;
+
+        let counter_name = "test_counter";
+
+        let _ = run(&counters::create_strong(counter_name).with_value(1)).await;
+
+        let resp = run(&counters::compare_and_set(counter_name, 0, 2)).await;
+        assert_eq!("false", resp.bytes().await.unwrap());
+        let resp = run(&counters::get(counter_name)).await;
+        assert!(resp.status().is_success());
+        assert_eq!("1", resp.bytes().await.unwrap());
+
+        let resp = run(&counters::compare_and_set(counter_name, 1, 2)).await;
+        assert_eq!("true", resp.bytes().await.unwrap());
+        let resp = run(&counters::get(counter_name)).await;
+        assert!(resp.status().is_success());
+        assert_eq!("2", resp.bytes().await.unwrap());
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn compare_and_swap() {
+        cleanup().await;
+
+        let counter_name = "test_counter";
+
+        let _ = run(&counters::create_strong(counter_name).with_value(1)).await;
+
+        let _ = run(&counters::compare_and_swap(counter_name, 0, 2)).await;
+        let resp = run(&counters::get(counter_name)).await;
+        assert!(resp.status().is_success());
+        assert_eq!("1", resp.bytes().await.unwrap());
+
+        let _ = run(&counters::compare_and_swap(counter_name, 1, 2)).await;
+        let resp = run(&counters::get(counter_name)).await;
+        assert!(resp.status().is_success());
+        assert_eq!("2", resp.bytes().await.unwrap());
     }
 
     #[tokio::test]
