@@ -163,12 +163,62 @@ pub fn get(name: impl AsRef<str>) -> Request {
     Request::new(Method::Get, counter_path(name), HashMap::new(), None)
 }
 
+pub fn get_config(name: impl AsRef<str>) -> Request {
+    Request::new(Method::Get, counter_config_path(name), HashMap::new(), None)
+}
+
 pub fn increment(name: impl Into<String>) -> IncrementCounterReq {
     IncrementCounterReq::new(name)
 }
 
+pub fn decrement(name: impl AsRef<str>) -> Request {
+    Request::new(
+        Method::Post,
+        format!("{}?action=decrement", counter_path(name)),
+        HashMap::new(),
+        None,
+    )
+}
+
+pub fn reset(name: impl AsRef<str>) -> Request {
+    Request::new(
+        Method::Post,
+        format!("{}?action=reset", counter_path(name)),
+        HashMap::new(),
+        None,
+    )
+}
+
 pub fn delete(name: impl AsRef<str>) -> Request {
     Request::new(Method::Delete, counter_path(name), HashMap::new(), None)
+}
+
+pub fn compare_and_set(name: impl AsRef<str>, expect: CounterVal, update: CounterVal) -> Request {
+    Request::new(
+        Method::Post,
+        format!(
+            "{}?action=compareAndSet&expect={}&update={}",
+            counter_path(name),
+            expect,
+            update
+        ),
+        HashMap::new(),
+        None,
+    )
+}
+
+pub fn compare_and_swap(name: impl AsRef<str>, expect: CounterVal, update: CounterVal) -> Request {
+    Request::new(
+        Method::Post,
+        format!(
+            "{}?action=compareAndSwap&expect={}&update={}",
+            counter_path(name),
+            expect,
+            update
+        ),
+        HashMap::new(),
+        None,
+    )
 }
 
 pub fn list() -> Request {
@@ -181,4 +231,8 @@ fn counter_path(name: impl AsRef<str>) -> String {
         counters_endpoint = COUNTERS_ENDPOINT,
         counter_name = urlencoding::encode(name.as_ref())
     )
+}
+
+fn counter_config_path(name: impl AsRef<str>) -> String {
+    format!("{}/config", counter_path(name))
 }
