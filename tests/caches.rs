@@ -169,8 +169,4 @@ mod caches {
     async fn cache_names_from_list_resp(response: Response) -> HashSet<String> {
         serde_json::from_str(&read_body(response).await).unwrap()
     }
-
-    async fn read_body(response: Response) -> String {
-        response.text_with_charset("utf-8").await.unwrap()
-    }
 }
