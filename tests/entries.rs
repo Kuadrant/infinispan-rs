@@ -2,11 +2,10 @@ mod helpers;
 
 #[cfg(test)]
 mod entries {
-    use crate::helpers::run;
+    use crate::helpers::{read_body, run};
     use http::StatusCode;
     use infinispan::request::caches;
     use infinispan::request::entries;
-    use reqwest::Response;
     use serial_test::serial;
 
     const TEST_CACHE_NAME: &str = "test_cache";
@@ -36,7 +35,7 @@ mod entries {
             run(&entries::create(TEST_CACHE_NAME, entry_name).with_value(entry_value.into())).await;
         let resp = run(&entries::get(TEST_CACHE_NAME, entry_name)).await;
 
-        assert_eq!(entry_value, entry_value_from_resp(resp).await);
+        assert_eq!(entry_value, read_body(resp).await);
     }
 
     #[tokio::test]
@@ -72,7 +71,7 @@ mod entries {
         let _ = run(&entries::update(TEST_CACHE_NAME, entry_name, new_value)).await;
         let resp = run(&entries::get(TEST_CACHE_NAME, entry_name)).await;
 
-        assert_eq!(new_value, entry_value_from_resp(resp).await);
+        assert_eq!(new_value, read_body(resp).await);
     }
 
     #[tokio::test]
@@ -94,9 +93,5 @@ mod entries {
     async fn setup() {
         let _ = run(&caches::delete(TEST_CACHE_NAME)).await;
         let _ = run(&caches::create_local(TEST_CACHE_NAME)).await;
-    }
-
-    async fn entry_value_from_resp(response: Response) -> String {
-        response.text_with_charset("utf-8").await.unwrap()
     }
 }
