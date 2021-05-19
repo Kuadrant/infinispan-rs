@@ -143,7 +143,7 @@ use crate::request::ToHttpRequest;
 pub mod errors;
 pub mod request;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Infinispan {
     base_url: String,
     http_client: reqwest::Client,
