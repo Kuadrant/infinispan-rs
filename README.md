@@ -19,7 +19,7 @@ implements a small part of the API.
 Add the `infinispan` dependency to your `Cargo.toml`:
 ```toml
 [dependencies]
-infinispan = 0.1
+infinispan = "0.2"
 ```
 
 ## Usage
