@@ -1,3 +1,6 @@
+pub mod modes;
+
+use crate::request::caches::modes::*;
 use crate::request::{Method, Request};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -5,41 +8,19 @@ use std::collections::HashMap;
 
 pub(crate) const CACHES_ENDPOINT: &str = "/rest/v2/caches";
 
-const DEFAULT_CONCURRENCY_LEVEL: i32 = 1000;
-const DEFAULT_ACQUIRE_TIMEOUT: i32 = 15000;
-
-#[derive(Serialize, Deserialize)]
-enum Cache {
+#[derive(Eq, PartialEq, Debug, Serialize, Deserialize)]
+pub enum Cache {
     #[serde(rename = "local-cache")]
-    LocalCache(LocalCache),
-}
+    Local(Local),
 
-#[derive(Serialize, Deserialize)]
-struct LocalCache {
-    locking: Locking,
-    statistics: bool,
-}
+    #[serde(rename = "replicated-cache")]
+    Replicated(Replicated),
 
-#[derive(Serialize, Deserialize)]
-struct Locking {
-    #[serde(rename = "concurrency-level")]
-    concurrency_level: i32,
-    #[serde(rename = "acquire-timeout")]
-    acquire_timeout: i32,
-    striping: bool,
-}
+    #[serde(rename = "distributed-cache")]
+    Distributed(Distributed),
 
-impl Default for LocalCache {
-    fn default() -> Self {
-        Self {
-            locking: Locking {
-                concurrency_level: DEFAULT_CONCURRENCY_LEVEL,
-                acquire_timeout: DEFAULT_ACQUIRE_TIMEOUT,
-                striping: false,
-            },
-            statistics: true,
-        }
-    }
+    #[serde(rename = "invalidation-cache")]
+    Invalidation(Invalidation),
 }
 
 #[derive(Debug)]
@@ -60,12 +41,31 @@ impl Action {
 }
 
 pub fn create_local(name: impl AsRef<str>) -> Request {
-    Request::new(
-        Method::Post,
-        cache_url(name),
-        HashMap::new(),
-        Some(json!(Cache::LocalCache(LocalCache::default())).to_string()),
-    )
+    create_cache(name, Cache::Local(Local::default()))
+}
+
+pub fn create_replicated_async(name: impl AsRef<str>) -> Request {
+    create_cache(name, Cache::Replicated(Replicated::create_async()))
+}
+
+pub fn create_replicated_sync(name: impl AsRef<str>) -> Request {
+    create_cache(name, Cache::Replicated(Replicated::create_sync()))
+}
+
+pub fn create_distributed_async(name: impl AsRef<str>) -> Request {
+    create_cache(name, Cache::Distributed(Distributed::create_async()))
+}
+
+pub fn create_distributed_sync(name: impl AsRef<str>) -> Request {
+    create_cache(name, Cache::Distributed(Distributed::create_sync()))
+}
+
+pub fn create_invalidation_async(name: impl AsRef<str>) -> Request {
+    create_cache(name, Cache::Invalidation(Invalidation::create_async()))
+}
+
+pub fn create_invalidation_sync(name: impl AsRef<str>) -> Request {
+    create_cache(name, Cache::Invalidation(Invalidation::create_sync()))
 }
 
 pub fn exists(name: impl AsRef<str>) -> Request {
@@ -139,4 +139,13 @@ fn cache_url(name: impl AsRef<str>) -> String {
 
 fn cache_url_with_action(name: impl AsRef<str>, action: &Action) -> String {
     format!("{}?{}", cache_url(name), action.to_query_args())
+}
+
+fn create_cache(name: impl AsRef<str>, cache: Cache) -> Request {
+    Request::new(
+        Method::Post,
+        cache_url(name),
+        HashMap::new(),
+        Some(json!(cache).to_string()),
+    )
 }

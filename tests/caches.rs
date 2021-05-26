@@ -4,6 +4,8 @@ mod helpers;
 mod caches {
     use crate::helpers::*;
     use http::StatusCode;
+    use infinispan::request::caches::modes::*;
+    use infinispan::request::caches::Cache;
     use infinispan::request::{caches, entries};
     use reqwest::Response;
     use serde_json::Value;
@@ -19,9 +21,101 @@ mod caches {
         let cache_name = "test_cache";
 
         let _ = run(&caches::create_local(cache_name)).await;
-        let resp = run(&caches::exists(cache_name)).await;
 
-        assert!(resp.status().is_success());
+        assert_eq!(
+            get_cache_config(cache_name).await,
+            Cache::Local(Local::default())
+        );
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn create_replicated_async() {
+        cleanup().await;
+
+        let cache_name = "test_cache";
+
+        let _ = run(&caches::create_replicated_async(cache_name)).await;
+
+        assert_eq!(
+            get_cache_config(cache_name).await,
+            Cache::Replicated(Replicated::create_async())
+        );
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn create_replicated_sync() {
+        cleanup().await;
+
+        let cache_name = "test_cache";
+
+        let _ = run(&caches::create_replicated_sync(cache_name)).await;
+
+        assert_eq!(
+            get_cache_config(cache_name).await,
+            Cache::Replicated(Replicated::create_sync())
+        );
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn create_distributed_async() {
+        cleanup().await;
+
+        let cache_name = "test_cache";
+
+        let _ = run(&caches::create_distributed_async(cache_name)).await;
+
+        assert_eq!(
+            get_cache_config(cache_name).await,
+            Cache::Distributed(Distributed::create_async())
+        );
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn create_distributed_sync() {
+        cleanup().await;
+
+        let cache_name = "test_cache";
+
+        let _ = run(&caches::create_distributed_sync(cache_name)).await;
+
+        assert_eq!(
+            get_cache_config(cache_name).await,
+            Cache::Distributed(Distributed::create_sync())
+        );
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn create_invalidation_async() {
+        cleanup().await;
+
+        let cache_name = "test_cache";
+
+        let _ = run(&caches::create_invalidation_async(cache_name)).await;
+
+        assert_eq!(
+            get_cache_config(cache_name).await,
+            Cache::Invalidation(Invalidation::create_async())
+        );
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn create_invalidation_sync() {
+        cleanup().await;
+
+        let cache_name = "test_cache";
+
+        let _ = run(&caches::create_invalidation_sync(cache_name)).await;
+
+        assert_eq!(
+            get_cache_config(cache_name).await,
+            Cache::Invalidation(Invalidation::create_sync())
+        );
     }
 
     #[tokio::test]
@@ -168,5 +262,10 @@ mod caches {
 
     async fn cache_names_from_list_resp(response: Response) -> HashSet<String> {
         serde_json::from_str(&read_body(response).await).unwrap()
+    }
+
+    async fn get_cache_config(name: impl AsRef<str>) -> Cache {
+        let resp = run(&caches::get_config(name)).await;
+        serde_json::from_str::<Cache>(&read_body(resp).await).unwrap()
     }
 }
