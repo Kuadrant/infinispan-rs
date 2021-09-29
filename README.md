@@ -1,7 +1,7 @@
 # infinispan-rs
 
 ![Github
-Workflow](https://github.com/3scale-labs/infinispan-rs/workflows/Infinispan-rs/badge.svg)
+Workflow](https://github.com/kuadrant/infinispan-rs/workflows/Infinispan-rs/badge.svg)
 [![docs.rs](https://docs.rs/infinispan/badge.svg)](https://docs.rs/infinispan)
 [![Crates.io](https://img.shields.io/crates/v/infinispan)](https://crates.io/crates/infinispan)
 
