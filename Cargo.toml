@@ -13,7 +13,7 @@ categories = ["api-bindings"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = "0.10"
+reqwest = "0.11"
 http = "0.2.3"
 base64 = "0.13.0"
 urlencoding = "2"
@@ -22,5 +22,5 @@ serde = { version = "1.0", features = ["derive"] }
 thiserror = "1.0"
 
 [dev-dependencies]
-tokio = { version = "0.2", features = ["rt-core", "macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 serial_test = "0.5"
