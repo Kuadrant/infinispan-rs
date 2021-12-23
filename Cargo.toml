@@ -1,5 +1,5 @@
 [package]
-edition = "2018"
+edition = "2021"
 name = "infinispan"
 version = "0.2.0"
 description = "Rust client for the Infinispan REST API"
