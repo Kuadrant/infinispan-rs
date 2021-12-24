@@ -1,10 +1,13 @@
 [package]
-edition = "2018"
+edition = "2021"
 name = "infinispan"
 version = "0.2.0"
 description = "Rust client for the Infinispan REST API"
 license = "Apache-2.0"
-authors = ["Alex Martinez Ruiz <alex@flawedcode.org>"]
+authors = [
+    "David Ortiz <z.david.ortiz@gmail.com>",
+    "Alejandro Martinez Ruiz <alex@flawedcode.org>",
+]
 repository = "https://github.com/kuadrant/infinispan-rs"
 readme = "README.md"
 keywords = ["client", "api", "infinispan", "jboss", "datagrid"]
@@ -13,14 +16,14 @@ categories = ["api-bindings"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = "0.10.10"
-http = "0.2.3"
-base64 = "0.13.0"
-urlencoding = "1.1.1"
-serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-thiserror = "1.0"
+reqwest = "0.11"
+http = "0.2"
+base64 = "0.13"
+urlencoding = "2"
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
 
 [dev-dependencies]
-tokio = { version = "0.2", features = ["rt-core", "macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 serial_test = "0.5"

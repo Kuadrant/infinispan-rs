@@ -133,6 +133,9 @@
 //! ```
 //!
 
+#![deny(clippy::all, clippy::cargo)]
+#![allow(clippy::multiple_crate_versions)]
+
 use std::convert::TryFrom;
 
 use reqwest::Response;
