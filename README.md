@@ -9,17 +9,20 @@ infinispan-rs is a Rust client for the [Infinispan REST
 API](https://infinispan.org/docs/stable/titles/rest/rest.html). For now, it
 implements a small part of the API.
 
-- [**Install**](#install)
-- [**Usage**](#usage)
-- [**Development**](#development)
-- [**License**](#license)
+- [infinispan-rs](#infinispan-rs)
+  - [Install](#install)
+  - [Usage](#usage)
+  - [Development](#development)
+    - [Build](#build)
+    - [Run the tests](#run-the-tests)
+  - [License](#license)
 
 ## Install
 
 Add the `infinispan` dependency to your `Cargo.toml`:
 ```toml
 [dependencies]
-infinispan = "0.2"
+infinispan = "0.3"
 ```
 
 ## Usage
