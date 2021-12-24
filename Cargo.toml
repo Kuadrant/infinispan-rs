@@ -1,7 +1,7 @@
 [package]
 edition = "2021"
 name = "infinispan"
-version = "0.2.0"
+version = "0.3.0"
 description = "Rust client for the Infinispan REST API"
 license = "Apache-2.0"
 authors = [

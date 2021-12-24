@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.3.0 - 2021-12-24
+
+### Changed
+
+- Move to edition 2021.
+([#22](https://github.com/kuadrant/infinispan-rs/pull/22)).
+- Require reqwest 0.11 to use the Tokio 1.X async runtime
+([#22](https://github.com/kuadrant/infinispan-rs/pull/22)).
+
 ## 0.2.0 - 2021-05-19
 
 ### Added
